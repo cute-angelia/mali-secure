@@ -13,7 +13,7 @@
 ## some example
 
 ```
-const { Secure } = new require("mali-secure")
+const { Secure } = require("mali-secure")
 
 // cid   :商户 id
 // openid:三方用户 id
