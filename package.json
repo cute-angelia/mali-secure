@@ -1,0 +1,15 @@
+{
+  "name": "mali-secure",
+  "version": "1.0.0",
+  "description": "\bfor bestmali with wechat pay Sign and decrypt data with aes-256-cbc",
+  "main": "secure.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "crypto": "^1.0.1",
+    "md5": "^2.2.1"
+  }
+}
