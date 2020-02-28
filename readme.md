@@ -4,6 +4,12 @@
 
 2. 解密后端数据
 
+## install
+
+`npm i mali-secure --save-dev`
+
+[mali-secure](https://www.npmjs.com/package/mali-secure)
+
 ## some example
 
 ```
