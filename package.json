@@ -6,10 +6,23 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "crypto": "^1.0.1",
     "md5": "^2.2.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cute-angelia/mali-secure.git"
+  },
+  "homepage": "https://github.com/cute-angelia/mali-secure.git",
+  "bugs": {
+    "url": "https://github.com/cute-angelia/mali-secure.git/issues"
+  },
+  "keywords": [
+    "secure",
+    "decrypt",
+    "wechat sign"
+  ],
+  "author": "rose2099.c@gmail.com",
+  "license": "ISC"
 }
