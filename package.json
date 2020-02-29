@@ -1,6 +1,6 @@
 {
   "name": "mali-secure",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "\bfor bestmali with wechat pay Sign and decrypt data with aes-256-cbc",
   "main": "secure.js",
   "scripts": {
