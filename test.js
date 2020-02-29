@@ -2,7 +2,7 @@ const { Secure } = new require("./secure")
 
 // cid 商户 id
 // openid 三方用户 id
-let s = new Secure("cid", "123456", "192006250b4c09247ec02edce69f6a2d")
+let s = new Secure("cid123456", "123456", "192006250b4c09247ec02edce69f6a2d")
 
 // 获取微信支付公共签名后的地址
 let uri = s.getSign("https://mp.weixin.qq.com/wxamp/devprofile/get_profile?token=1515154505&lang=zh_CN")

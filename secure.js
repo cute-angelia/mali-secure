@@ -51,26 +51,52 @@ class Secure {
 
   // 获取签名后的地址
   getSign(url) {
+    let data = {
+      nonce_str: this._generateNonceString(8),
+      nonce_time: this._generateNonceDateline()
+    }
+    return this._generateSign(url, data)
+  }
+
+  getSignWithCidOpenId(url) {
+    let data = {
+      cid: this.cid,
+      openid: this.openid,
+      nonce_str: this._generateNonceString(8),
+      nonce_time: this._generateNonceDateline()
+    }
+    return this._generateSign(url, data)
+  }
+
+  // data = { "nonce_str": "nonce_str=xxx", "nonce_time": "nonce_time="xxx"}
+  _generateSign(url, data) {
     let uri = new URL(url)
     const search = uri.search
     var searchParams = new URLSearchParams(search)
 
     let keys = []
-    for (var value of searchParams.keys()) {  // @@iterator is used
+
+    // keys for url
+    for (var value of searchParams.keys()) { // @@iterator is used
       keys.push(value)
     }
-    keys.push("nonce_str");
-    keys.push("nonce_time");
+
+    // keys for input
+    let inputKeys = Object.keys(data)
+    for (let i = 0; i < inputKeys.length; i++) {
+      keys.push(inputKeys[i]);
+    }
+
+    // sort keys
     keys = keys.sort()
 
+    // get url params
     let params = []
     for (const element of keys) {
-      if (element == "nonce_str") {
-        params.push(element + "=" + this._generateNonceString(8))
-      } else if (element == "nonce_time") {
-        params.push(element + "=" + this._generateNonceDateline())
-      } else {
+      if (searchParams.get(element)) {
         params.push(element + "=" + searchParams.get(element))
+      } else {
+        params.push(element + "=" + data[element])
       }
     }
 
