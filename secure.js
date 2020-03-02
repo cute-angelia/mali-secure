@@ -51,23 +51,38 @@ class Secure {
 
   // 获取签名后的地址
   getSign(url) {
-    let debug = localStorage['env'] == "local" ? "true" : "false"
+    let debug = "false"
+    try {
+      debug = localStorage && localStorage['env'] == "local" ? "true" : "false"
+    } catch (e) {
+    }
+
     let data = {
       debug: debug,
       nonce_str: this._generateNonceString(8),
       nonce_time: this._generateNonceDateline()
     }
+    if (debug == "false") {
+      delete (data.debug)
+    }
     return this._generateSign(url, data)
   }
 
   getSignWithCidOpenId(url) {
-    let debug = localStorage['env'] == "local" ? "true" : "false"
+    let debug = "false"
+    try {
+      debug = localStorage && localStorage['env'] == "local" ? "true" : "false"
+    } catch (e) {
+    }
     let data = {
       debug: debug,
       cid: this.cid,
       openid: this.openid,
       nonce_str: this._generateNonceString(8),
       nonce_time: this._generateNonceDateline()
+    }
+    if (debug == "false") {
+      delete (data.debug)
     }
     return this._generateSign(url, data)
   }
