@@ -51,7 +51,9 @@ class Secure {
 
   // 获取签名后的地址
   getSign(url) {
+    let debug = localStorage['env'] == "local" ? "true" : "false"
     let data = {
+      debug: debug,
       nonce_str: this._generateNonceString(8),
       nonce_time: this._generateNonceDateline()
     }
