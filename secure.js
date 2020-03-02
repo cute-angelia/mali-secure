@@ -61,7 +61,9 @@ class Secure {
   }
 
   getSignWithCidOpenId(url) {
+    let debug = localStorage['env'] == "local" ? "true" : "false"
     let data = {
+      debug: debug,
       cid: this.cid,
       openid: this.openid,
       nonce_str: this._generateNonceString(8),
