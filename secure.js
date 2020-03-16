@@ -89,7 +89,15 @@ class Secure {
 
   // data = { "nonce_str": "nonce_str=xxx", "nonce_time": "nonce_time="xxx"}
   _generateSign(url, data) {
-    let uri = new URL(url)
+    let uri = ""
+    let urlprefix = ""
+    try {
+      uri = new URL(url)
+    } catch (error) {
+      urlprefix = "https://127.0.0.1/"
+      uri = new URL(urlprefix + url)
+    }
+
     const search = uri.search
     var searchParams = new URLSearchParams(search)
 
@@ -125,6 +133,11 @@ class Secure {
     params.push("sign=" + sign)
 
     uri = uri.origin + uri.pathname + "?" + params.join("&")
+
+
+    if (urlprefix.length > 0) {
+      uri = uri.replace(urlprefix, "")
+    }
     return uri
   }
 
