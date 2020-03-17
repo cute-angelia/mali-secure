@@ -5,6 +5,13 @@ try {
   console.log('md5 support is disabled!');
 }
 
+var parseuri;
+try {
+  parseuri = require('parseuri');
+} catch (err) {
+  console.log('parseuri support is disabled!');
+}
+
 var crypto;
 try {
   crypto = require('crypto');
@@ -89,22 +96,13 @@ class Secure {
 
   // data = { "nonce_str": "nonce_str=xxx", "nonce_time": "nonce_time="xxx"}
   _generateSign(url, data) {
-    let uri = ""
-    let urlprefix = ""
-    try {
-      uri = new URL(url)
-    } catch (error) {
-      urlprefix = "https://127.0.0.1/"
-      uri = new URL(urlprefix + url)
-    }
 
-    const search = uri.search
-    var searchParams = new URLSearchParams(search)
+    var parseurl = parseuri(url)
 
     let keys = []
 
     // keys for url
-    for (var value of searchParams.keys()) { // @@iterator is used
+    for (var value in parseurl.queryKey) {
       keys.push(value)
     }
 
@@ -116,12 +114,11 @@ class Secure {
 
     // sort keys
     keys = keys.sort()
-
     // get url params
     let params = []
     for (const element of keys) {
-      if (searchParams.get(element)) {
-        params.push(element + "=" + searchParams.get(element))
+      if (parseurl.queryKey[element]) {
+        params.push(element + "=" + parseurl.queryKey[element])
       } else {
         params.push(element + "=" + data[element])
       }
@@ -132,13 +129,12 @@ class Secure {
     let sign = md5(stringSignTemp).toLocaleUpperCase()
     params.push("sign=" + sign)
 
-    uri = uri.origin + uri.pathname + "?" + params.join("&")
 
-
-    if (urlprefix.length > 0) {
-      uri = uri.replace(urlprefix, "")
+    if (parseurl.protocol.length > 2) {
+      return parseurl.protocol + "://" + parseurl.host + parseurl.path + "?" + params.join("&")
+    } else {
+      return parseurl.host + parseurl.path + "?" + params.join("&")
     }
-    return uri
   }
 
   _generateNonceDateline() {
