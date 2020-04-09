@@ -9,9 +9,12 @@ let uri = s.getSign("https://mp.weixin.qq.com/wxamp/devprofile/get_profile?token
 let uri2 = s.getSign("/get_profile?token=1515154505&lang=zh_CN")
 let uri3 = s.getSign("www.baidu.com/get_profile?token=1515154505&lang=zh_CN")
 
+let uri4 = s.getSign("http://127.0.0.1:3223?token=1515154505&lang=zh_CN")
+
 console.log(uri);
 console.log(uri2);
 console.log(uri3);
+console.log(uri4);
 
 let jsonstr = { "code": 0, "crypto": "ZZwNjmEiGwTCeyYpsqKoSVMfGyUmtCGx", "data": "6f39a22554351a8ce2ea06c733d47233bee6fd2891850a38e7d55d52aee53971b129561ba3186c8ca5e3090719909cef2d03785e829e38ca76da0051fac5bf64", "msg": "成功!" }
 

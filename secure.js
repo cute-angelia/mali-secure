@@ -98,7 +98,6 @@ class Secure {
   _generateSign(url, data) {
 
     var parseurl = parseuri(url)
-
     let keys = []
 
     // keys for url
@@ -129,9 +128,8 @@ class Secure {
     let sign = md5(stringSignTemp).toLocaleUpperCase()
     params.push("sign=" + sign)
 
-
     if (parseurl.protocol.length > 2) {
-      return parseurl.protocol + "://" + parseurl.host + parseurl.path + "?" + params.join("&")
+      return parseurl.protocol + "://" + parseurl.authority + parseurl.path + "?" + params.join("&")
     } else {
       return parseurl.host + parseurl.path + "?" + params.join("&")
     }
