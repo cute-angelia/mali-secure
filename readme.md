@@ -15,7 +15,7 @@
 ```
 const { Secure } = require("mali-secure")
 
-// cid   :商户 id
+// cid   :商户 id 等同于 app_id
 // openid:三方用户 id
 // secret:秘钥
 let s = new Secure("cid", "123456", "192006250b4c09247ec02edce69f6a2d")
