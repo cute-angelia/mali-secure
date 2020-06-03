@@ -20,7 +20,8 @@ try {
 }
 
 class Secure {
-  constructor(cid, openid, secret) {
+  constructor(appid, cid, openid, secret) {
+    this.appid = appid;
     this.cid = cid;
     this.openid = openid;
     this.secret = secret
@@ -75,7 +76,7 @@ class Secure {
     return this._generateSign(url, data)
   }
 
-  getSignWithCidOpenId(url) {
+  getSignAppid(url) {
     let debug = "false"
     try {
       debug = localStorage && localStorage['env'] == "local" ? "true" : "false"
@@ -83,6 +84,7 @@ class Secure {
     }
     let data = {
       debug: debug,
+      appid: this.appid,
       cid: this.cid,
       openid: this.openid,
       nonce_str: this._generateNonceString(8),

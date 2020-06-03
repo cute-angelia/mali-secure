@@ -15,12 +15,15 @@
 ```
 const { Secure } = require("mali-secure")
 
-// cid   :商户 id 等同于 app_id
-// openid:三方用户 id
+// appid :商品 
+// cid   :商品渠道号
+// openid:三方用户id
 // secret:秘钥
-let s = new Secure("cid", "123456", "192006250b4c09247ec02edce69f6a2d")
+let s = new Secure("appid", "cid", "", "192006250b4c09247ec02edce69f6a2d")
 
 // 获取微信支付公共签名后的地址
+let uri = s.getSignAppid("https://mp.weixin.qq.com/wxamp/devprofile/get_profile?token=1515154505&lang=zh_CN")
+
 let uri = s.getSign("https://mp.weixin.qq.com/wxamp/devprofile/get_profile?token=1515154505&lang=zh_CN")
 
 // 输出加密后的地址
