@@ -20,11 +20,15 @@ try {
 }
 
 class Secure {
-  constructor(appid, cid, openid, secret) {
+  constructor(appid, cid, openid, secret, version, device = "ios_1.0.0", platform = "app") {
     this.appid = appid;
     this.cid = cid;
     this.openid = openid;
     this.secret = secret
+
+    this.version = version
+    this.device = device
+    this.platform = platform
   }
 
   // 解密数据
@@ -67,26 +71,12 @@ class Secure {
 
     let data = {
       debug: debug,
-      nonce_str: this._generateNonceString(8),
-      nonce_time: this._generateNonceDateline()
-    }
-    if (debug == "false") {
-      delete (data.debug)
-    }
-    return this._generateSign(url, data)
-  }
-
-  getSignAppid(url) {
-    let debug = "false"
-    try {
-      debug = localStorage && localStorage['env'] == "local" ? "true" : "false"
-    } catch (e) {
-    }
-    let data = {
-      debug: debug,
       appid: this.appid,
       cid: this.cid,
       openid: this.openid,
+      version: this.version,
+      device: this.device,
+      platform: this.platform,
       nonce_str: this._generateNonceString(8),
       nonce_time: this._generateNonceDateline()
     }
