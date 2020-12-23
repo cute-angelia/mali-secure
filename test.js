@@ -4,7 +4,7 @@ const { Secure } = new require("./secure")
 // appid, cid, openid, secret, version, device = "ios_1.0.0", platform = "app"
 // cid 商户 id
 // openid 三方用户 id
-let s = new Secure("appxx", "1", "123456", "192006250b4c09247ec02edce69f6a2d", "1.0.1")
+let s = new Secure("20201111091600509389", "1", "123456", "192006250b4c09247ec02edce69f6a2d", "1.0.1")
 
 // 获取微信支付公共签名后的地址
 let uri = s.getSign("https://mp.weixin.qq.com/wxamp/devprofile/get_profile?token=1515154505&lang=zh_CN")
