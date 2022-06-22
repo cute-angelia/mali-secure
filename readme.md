@@ -8,6 +8,10 @@
 
 `npm i mali-secure --save-dev`
 
+or
+
+`pnpm mali-secure`
+
 [mali-secure](https://www.npmjs.com/package/mali-secure)
 
 ## some example
