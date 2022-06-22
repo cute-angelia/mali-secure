@@ -10,7 +10,7 @@
 
 or
 
-`pnpm mali-secure`
+`pnpm i mali-secure`
 
 [mali-secure](https://www.npmjs.com/package/mali-secure)
 
