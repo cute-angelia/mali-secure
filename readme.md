@@ -1,6 +1,6 @@
 ## mali-secure
 
-1. 微信支付签名算法 https://pay.weixin.qq.com/wiki/doc/api/jsapi.php
+1. 微信支付签名算法 [微信文档](https://pay.weixin.qq.com/wiki/doc/api/jsapi.php?chapter=4_3)
 
 2. 解密后端数据
 
