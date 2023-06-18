@@ -19,6 +19,7 @@ let jsonstr = { "code": 0, "crypto": "ZZwNjmEiGwTCeyYpsqKoSVMfGyUmtCGx", "data":
 
 // 获取解密数据
 let decryptJson = s.decrypt(jsonstr)
+console.log("==== decrypt ====");
 console.log(decryptJson);
 
 // 检查 data 是否是 base64，是的话解压 base64

@@ -7,7 +7,7 @@ try {
 
 var parseuri;
 try {
-  parseuri = require('parseuri');
+  parseuri = require('./parseuri');
 } catch (err) {
   console.log('parseuri support is disabled!');
 }
