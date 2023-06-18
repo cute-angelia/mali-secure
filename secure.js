@@ -1,10 +1,3 @@
-var md5;
-try {
-  md5 = require('md5');
-} catch (err) {
-  console.log('md5 support is disabled!');
-}
-
 var parseuri;
 try {
   parseuri = require('./parseuri');
@@ -18,6 +11,8 @@ try {
 } catch (err) {
   console.log('crypto support is disabled!');
 }
+
+const md5 = data => crypto.createHash('md5').update(data).digest("hex")
 
 class Secure {
   constructor(appid, cid, openid, secret, version, device = "ios_1.0.0", platform = "app") {
@@ -117,6 +112,7 @@ class Secure {
 
     let stringA = params.join("&")
     let stringSignTemp = stringA + "&key=" + this.secret
+
     let sign = md5(stringSignTemp).toLocaleUpperCase()
     params.push("sign=" + sign)
 
