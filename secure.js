@@ -1,71 +1,72 @@
-var parseuri;
-try {
-  parseuri = require('./parseuri');
-} catch (err) {
-  console.log('parseuri support is disabled!');
-}
+import CryptoJS from 'crypto-js';
+// 确保 parseuri 也是 ESM 格式，或者通过构建工具处理
+import parseuri from './parseuri';
 
-var crypto;
-try {
-  crypto = require('crypto');
-} catch (err) {
-  console.log('crypto support is disabled!');
-}
+// --- MD5 部分 ---
+const md5 = data => CryptoJS.MD5(data).toString();
 
-const md5 = data => crypto.createHash('md5').update(data).digest("hex")
-
-class Secure {
+export class Secure {
   constructor(appid, cid, openid, secret, version, device = "ios_1.0.0", platform = "app") {
     this.appid = appid;
     this.cid = cid;
     this.openid = openid;
-    this.secret = secret
-
-    this.version = version
-    this.device = device
-    this.platform = platform
+    this.secret = secret;
+    this.version = version;
+    this.device = device;
+    this.platform = platform;
   }
 
-  // 解密数据
+  // 解密数据 (AES-256-CBC)
   decrypt(json) {
     if (json.crypto && json.crypto.length > 0) {
-      const ALGORITHM = 'aes-256-cbc';
-      const BLOCK_SIZE = 16;
+      const BLOCK_SIZE_BYTES = 16;
+      const key = CryptoJS.enc.Hex.parse(json.crypto);
+      const fullCipher = CryptoJS.enc.Hex.parse(json.data);
 
-      let CIPHER_KEY = json.crypto
-      let cipherText = json.data
+      const iv = CryptoJS.lib.WordArray.create(fullCipher.words.slice(0, 4), BLOCK_SIZE_BYTES);
+      const cipherText = CryptoJS.lib.WordArray.create(fullCipher.words.slice(4));
 
-      // Decrypts cipher text into plain text
-      const contents = Buffer.from(cipherText, 'hex');
-      const iv = contents.slice(0, BLOCK_SIZE);
-      const textBytes = contents.slice(BLOCK_SIZE);
+      const decrypted = CryptoJS.AES.decrypt(
+        { ciphertext: cipherText },
+        key,
+        {
+          iv: iv,
+          mode: CryptoJS.mode.CBC,
+          padding: CryptoJS.pad.Pkcs7
+        }
+      );
 
-      const decipher = crypto.createDecipheriv(ALGORITHM, CIPHER_KEY, iv);
-      let decrypted = decipher.update(textBytes, 'hex', 'utf8');
-      decrypted += decipher.final('utf8');
-      json.data = JSON.parse(decrypted)
+      const decryptedStr = decrypted.toString(CryptoJS.enc.Utf8);
+      if (!decryptedStr) throw new Error("解密失败");
+
+      json.data = JSON.parse(decryptedStr);
     }
-    return json
+    return json;
   }
 
   checkBase64(data) {
     try {
-      return JSON.parse(window.atob(data))
+      // MV3 中直接使用全局 atob，不要加 window.
+      return JSON.parse(atob(data));
     } catch (e) {
-      return data
+      return data;
     }
   }
 
   // 获取签名后的地址
   getSign(url) {
-    let debug = "false"
+    let debug = "false";
     try {
-      debug = localStorage && localStorage['env'] == "local" ? "true" : "false"
+      // Service Worker 不支持 localStorage，这里增加回退逻辑
+      // 如果是在 Content Script 运行则正常，Background 运行需注意
+      if (typeof localStorage !== 'undefined') {
+        debug = localStorage['env'] === "local" ? "true" : "false";
+      }
     } catch (e) {
+      console.warn("LocalStorage unavailable");
     }
 
     let data = {
-      debug: debug,
       appid: this.appid,
       cid: this.cid,
       openid: this.openid,
@@ -74,69 +75,59 @@ class Secure {
       platform: this.platform,
       nonce_str: this._generateNonceString(8),
       nonce_time: this._generateNonceDateline()
-    }
-    if (debug == "false") {
-      delete (data.debug)
-    }
-    return this._generateSign(url, data)
+    };
+
+    if (debug === "true") data.debug = "true";
+
+    return this._generateSign(url, data);
   }
 
-  // data = { "nonce_str": "nonce_str=xxx", "nonce_time": "nonce_time="xxx"}
   _generateSign(url, data) {
+    const parseurl = parseuri(url);
+    let keys = [];
 
-    var parseurl = parseuri(url)
-    let keys = []
-
-    // keys for url
-    for (var value in parseurl.queryKey) {
-      keys.push(value)
+    for (let value in parseurl.queryKey) {
+      keys.push(value);
     }
 
-    // keys for input
-    let inputKeys = Object.keys(data)
+    let inputKeys = Object.keys(data);
     for (let i = 0; i < inputKeys.length; i++) {
       keys.push(inputKeys[i]);
     }
 
-    // sort keys
-    keys = keys.sort()
-    // get url params
-    let params = []
+    keys = keys.sort();
+    let params = [];
     for (const element of keys) {
       if (parseurl.queryKey[element]) {
-        params.push(element + "=" + parseurl.queryKey[element])
+        params.push(element + "=" + parseurl.queryKey[element]);
       } else {
-        params.push(element + "=" + data[element])
+        params.push(element + "=" + data[element]);
       }
     }
 
-    let stringA = params.join("&")
-    let stringSignTemp = stringA + "&key=" + this.secret
+    let stringA = params.join("&");
+    let stringSignTemp = stringA + "&key=" + this.secret;
 
-    let sign = md5(stringSignTemp).toLocaleUpperCase()
-    params.push("sign=" + sign)
+    // CryptoJS 默认输出小写，后端通常要求大写
+    let sign = md5(stringSignTemp).toUpperCase();
+    params.push("sign=" + sign);
 
-    if (parseurl.protocol.length > 2) {
-      return parseurl.protocol + "://" + parseurl.authority + parseurl.path + "?" + params.join("&")
-    } else {
-      return parseurl.host + parseurl.path + "?" + params.join("&")
-    }
+    // 适配协议头
+    const protocol = parseurl.protocol ? parseurl.protocol + "://" : "";
+    const authority = parseurl.authority || "";
+    return protocol + authority + parseurl.path + "?" + params.join("&");
   }
 
   _generateNonceDateline() {
-    return Date.parse(new Date()) / 1000
+    return Math.floor(Date.now() / 1000);
   }
 
-  // 获取一次性字符串
   _generateNonceString(length) {
-    var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    var maxPos = chars.length;
-    var noceStr = "";
-    for (var i = 0; i < (length || 32); i++) {
-      noceStr += chars.charAt(Math.floor(Math.random() * maxPos));
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let noceStr = "";
+    for (let i = 0; i < (length || 32); i++) {
+      noceStr += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return noceStr;
   }
 }
-
-module.exports.Secure = Secure;
