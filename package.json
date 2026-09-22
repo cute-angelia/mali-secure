@@ -1,26 +1,57 @@
 {
   "name": "mali-secure",
-  "version": "1.0.14",
-  "description": "\bfor bestmali with wechat pay Sign and decrypt data with aes-256-cbc",
-  "main": "secure.js",
+  "version": "2.0.0",
+  "description": "Request signing & response decryption for mali APIs. Supports AES-GCM (mode 3) and legacy AES-CBC. Works in browser, Node.js, MV3 Service Worker, and WeChat mini-program.",
+  "type": "module",
+  "main": "./dist/secure.cjs",
+  "module": "./dist/secure.js",
+  "types": "./dist/secure.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/secure.d.ts",
+      "import": "./dist/secure.js",
+      "require": "./dist/secure.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "secure.js",
+    "secure.ts",
+    "parseuri.js",
+    "parseuri.d.ts",
+    "readme.md"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@noble/ciphers": "^1.3.0",
     "crypto-js": "^4.2.0"
+  },
+  "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
+    "@types/node": "^26.6.2",
+    "tsup": "^8.0.0",
+    "typescript": "^5.4.0"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cute-angelia/mali-secure.git"
   },
-  "homepage": "https://github.com/cute-angelia/mali-secure.git",
+  "homepage": "https://github.com/cute-angelia/mali-secure#readme",
   "bugs": {
-    "url": "https://github.com/cute-angelia/mali-secure.git/issues"
+    "url": "https://github.com/cute-angelia/mali-secure/issues"
   },
   "keywords": [
     "secure",
     "decrypt",
-    "wechat sign"
+    "aes-gcm",
+    "aes-cbc",
+    "wechat",
+    "miniprogram",
+    "sign"
   ],
   "author": "rose2099.c@gmail.com",
   "license": "ISC"
